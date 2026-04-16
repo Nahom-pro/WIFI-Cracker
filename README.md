@@ -14,13 +14,6 @@
 - Checks captured `.cap` files for a handshake with `aircrack-ng`.
 - Launches dictionary or mask-based cracking workflows from the menu.
 
-## What It Does Not Do
-
-- It does not bypass bad hardware support.
-- It does not automate WPA3 attacks.
-- It does not guarantee handshake capture.
-- It does not validate findings beyond the output of the underlying tools.
-- It is not a replacement for understanding 802.11 attack surface, RF conditions, or opsec.
 
 ## Operational Assumptions
 
@@ -28,15 +21,8 @@ Use this on Linux, as root, with an adapter that supports monitor mode and injec
 
 Required binaries:
 
-- `iwconfig`
-- `ip`
-- `airmon-ng`
-- `airodump-ng`
-- `aireplay-ng`
-- `aircrack-ng`
+- `aircrack-ng frameworks`
 - `hashcat`
-- `macchanger`
-- `curl`
 
 Optional:
 
@@ -85,8 +71,6 @@ Syntax smoke test:
 ./tests/smoke.sh
 ```
 
-That test only checks shell syntax. It does not simulate live capture, adapter state transitions, deauth behavior, or hashcat execution. Real validation still requires lab hardware and controlled targets.
-
 ## Notes for Researchers
 
 This repository is useful when you want a disposable, readable wrapper that keeps the workflow honest:
@@ -95,8 +79,6 @@ This repository is useful when you want a disposable, readable wrapper that keep
 - target selection is pulled from saved scan data
 - capture output is local and inspectable
 - handshake validation is visible, not hidden behind fake success messaging
-
-If you want a polished multi-module wireless platform with persistence, richer target intelligence, and broader attack coverage, build that separately. This repo is intentionally smaller than that.
 
 ## Legal
 
