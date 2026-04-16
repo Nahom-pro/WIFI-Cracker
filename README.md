@@ -1,32 +1,34 @@
 # WIFI-Cracker
 
-WIFI-Cracker is a menu-driven Bash wrapper around common wireless auditing tools such as `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hashcat`, and `macchanger`.
+`WIFI-Cracker` is a Bash-driven wireless assessment wrapper for operators who want a fast, repeatable path through the usual WPA/WPA2 workflow without manually retyping the same `aircrack-ng` commands every time.
 
-It is designed for authorized WiFi security research on Linux systems with a compatible adapter. It is not a full wireless auditing platform, and it does not replace the underlying aircrack-ng or hashcat toolchains.
+This is not a magic WiFi exploitation framework. It is a thin control layer over standard tooling such as `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hashcat`, and `macchanger`. If your adapter, chipset, drivers, or underlying tools are weak, this script will not save you.
 
-## What It Does Well
+## What It Actually Does
 
-- Detects wireless interfaces and helps switch them into monitor mode.
-- Saves scan results to CSV and lets you pick a target from the latest scan.
-- Starts focused handshake capture on a chosen BSSID and channel.
-- Sends a deauthentication burst to encourage client re-association.
-- Verifies whether the resulting capture appears to contain a handshake.
-- Supports `aircrack-ng` dictionary attacks and `hashcat` workflows when `hcxpcapngtool` is installed.
+- Enumerates wireless interfaces.
+- Starts and stops monitor mode.
+- Randomizes MAC addresses.
+- Launches airodump scans and saves the latest CSV.
+- Parses saved scan output into a target selection menu.
+- Runs focused handshake capture against a chosen BSSID and channel.
+- Fires a short deauthentication burst to force reassociation traffic.
+- Checks captured `.cap` files for a handshake with `aircrack-ng`.
+- Launches dictionary or mask-based cracking workflows from the menu.
 
-## Current Limits
+## What It Does Not Do
 
-- It depends completely on external WiFi hardware and the aircrack/hashcat ecosystem.
-- PMKID handling is only capture-oriented guidance, not a full automated PMKID workflow.
-- Handshake verification still depends on `aircrack-ng` output and should be manually reviewed.
-- There is no automated client discovery, WPA3 support, or persistent session management.
+- It does not bypass bad hardware support.
+- It does not automate WPA3 attacks.
+- It does not guarantee handshake capture.
+- It does not validate findings beyond the output of the underlying tools.
+- It is not a replacement for understanding 802.11 attack surface, RF conditions, or opsec.
 
-## Requirements
+## Operational Assumptions
 
-- Linux
-- Root privileges
-- Wireless adapter with monitor-mode and injection support
+Use this on Linux, as root, with an adapter that supports monitor mode and injection reliably enough for assessment work.
 
-Required tools:
+Required binaries:
 
 - `iwconfig`
 - `ip`
@@ -38,9 +40,11 @@ Required tools:
 - `macchanger`
 - `curl`
 
-Optional but recommended:
+Optional:
 
 - `hcxpcapngtool`
+
+Without `hcxpcapngtool`, the hashcat conversion path is limited.
 
 ## Usage
 
@@ -48,15 +52,17 @@ Optional but recommended:
 sudo ./wifi-cracker.sh
 ```
 
-Typical workflow:
+Operator flow:
 
-1. Start monitor mode on a wireless interface.
-2. Run a scan and stop it with `Ctrl+C` when enough targets appear.
-3. Select a target from the saved CSV.
-4. Start handshake capture and stop it with `Ctrl+C` when you want to verify.
-5. Pick a captured `.cap` file and choose a cracking method.
+1. Select an interface and move it into monitor mode.
+2. Run a scan and stop when target data is sufficient.
+3. Pick a target from the saved CSV.
+4. Start focused capture for the selected BSSID and channel.
+5. Let the script send a short deauth burst.
+6. Stop capture and review whether a handshake was actually obtained.
+7. Choose a capture file and run a cracking workflow if that is in scope.
 
-## Project Layout
+## File Layout
 
 ```text
 .
@@ -73,26 +79,27 @@ Typical workflow:
     └── smoke.sh
 ```
 
-## Verification
+## Validation
 
-Basic syntax smoke test:
+Syntax smoke test:
 
 ```bash
 ./tests/smoke.sh
 ```
 
-## Positioning
+That test only checks shell syntax. It does not simulate live capture, adapter state transitions, deauth behavior, or hashcat execution. Real validation still requires lab hardware and controlled targets.
 
-This project is a hardened research wrapper, not an industry-standard wireless auditing suite. Trust in this kind of tool comes from:
+## Notes for Researchers
 
-- correct monitor-mode handling
-- predictable capture control
-- honest documentation
-- safe parsing of scan results
-- manual validation of security findings
+This repository is useful when you want a disposable, readable wrapper that keeps the workflow honest:
 
-This repository is closer to that standard now, but serious use still depends on testing with real hardware and target labs.
+- monitor mode handling is explicit
+- target selection is pulled from saved scan data
+- capture output is local and inspectable
+- handshake validation is visible, not hidden behind fake success messaging
+
+If you want a polished multi-module wireless platform with persistence, richer target intelligence, and broader attack coverage, build that separately. This repo is intentionally smaller than that.
 
 ## Legal
 
-Use this tool only on networks you own or are explicitly authorized to assess.
+Use only on infrastructure you own or are explicitly authorized to assess. Wireless testing without authorization is illegal in many jurisdictions and operationally reckless in all of them.
