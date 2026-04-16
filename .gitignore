@@ -1,0 +1,8 @@
+wifi-cracker.log
+.codex
+
+captures/*
+!captures/.gitkeep
+
+wordlists/*
+!wordlists/.gitkeep
