@@ -2,8 +2,6 @@
 
 `WIFI-Cracker` is a Bash-driven wireless assessment wrapper for operators who want a fast, repeatable path through the usual WPA/WPA2 workflow without manually retyping the same `aircrack-ng` commands every time.
 
-This is not a magic WiFi exploitation framework. It is a thin control layer over standard tooling such as `airmon-ng`, `airodump-ng`, `aireplay-ng`, `aircrack-ng`, `hashcat`, and `macchanger`. If your adapter, chipset, drivers, or underlying tools are weak, this script will not save you.
-
 ## What It Actually Does
 
 - Enumerates wireless interfaces.
